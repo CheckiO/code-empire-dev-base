@@ -19,7 +19,15 @@ RUN groupadd -r postgres && useradd -r -g postgres postgres
 
 RUN \
     apt-get update && \
-    apt-get install -y wget apt-transport-https && \
+    apt-get install -y \
+        wget \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        lxc \
+        iptables
+
+RUN \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62 && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8 && \
     echo "deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx" >> /etc/apt/sources.list && \
@@ -34,14 +42,33 @@ RUN \
 
 RUN \
     apt-get update && \
-    apt-get install -y vim python python-dev python-pip python-software-properties libpq-dev redis-server nodejs rabbitmq-server nginx=${NGINX_VERSION} && \
-    pip install pip-accel && \
-    npm install npm -g && \
+    apt-get install -y \
+        vim \
+        apache2 \
+        libapache2-mod-wsgi \
+        python python-dev \
+        python-pip \
+        python-software-properties \
+        libpq-dev \
+        redis-server \
+        nodejs \
+        rabbitmq-server \
+        nginx
+
+RUN pip install pip-accel
+
+RUN npm install npm -g && \
     npm install gulp -g
 
 RUN service rabbitmq-server start && \
-    rabbitmq-plugins enable rabbitmq_management
+    rabbitmq-plugins enable rabbitmq_management && \
     service rabbitmq-server stop
+
+#------------ DOCKER --------------
+RUN curl -sSL https://get.docker.com/ubuntu/ | sh
+ADD ./wrapdocker /usr/local/bin/wrapdocker
+RUN chmod +x /usr/local/bin/wrapdocker
+VOLUME /var/lib/docker
 
 #------------ POSTGRESQL --------------
 RUN \
