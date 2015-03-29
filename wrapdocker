@@ -86,23 +86,4 @@ popd >/dev/null
 # delete it so that docker can start.
 rm -rf /var/run/docker.pid
 
-# If we were given a PORT environment variable, start as a simple daemon;
-# otherwise, spawn a shell as well
-if [ "$PORT" ]
-then
-	exec docker -d -H 0.0.0.0:$PORT -H unix://var/run/docker.sock \
-		$DOCKER_DAEMON_ARGS
-else
-	docker -d $DOCKER_DAEMON_ARGS &>/opt/project/logs/docker.log &
-	(( timeout = 60 + SECONDS ))
-	until docker info >/dev/null 2>&1
-	do
-		if (( SECONDS >= timeout )); then
-			echo 'Timed out trying to connect to internal docker host.' >&2
-			break
-		fi
-		sleep 1
-	done
-	[[ $1 ]] && exec "$@"
-	exec bash --login
-fi
+docker -d -H 0.0.0.0:2375 -H unix://var/run/docker.sock &>/opt/project/logs/docker.log &
