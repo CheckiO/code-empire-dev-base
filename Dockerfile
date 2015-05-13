@@ -6,6 +6,7 @@ ENV PG_MAJOR 9.4
 #ENV PG_VERSION 9.3.5-0ubuntu0.14.04.1
 ENV PG_VERSION 9.4.1-1.pgdg14.04+1
 ENV DB_NAME code_empire
+ENV DB_REQUEST_LOGGER_NAME request_logger
 
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -84,6 +85,7 @@ RUN \
     /etc/init.d/postgresql start && \
     psql --command "CREATE USER checkio WITH SUPERUSER PASSWORD 'checkio';" && \
     createdb -O checkio $DB_NAME && \
+    createdb -O checkio $DB_REQUEST_LOGGER_NAME && \
     echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$PG_MAJOR/main/pg_hba.conf && \
     echo "listen_addresses='*'" >> /etc/postgresql/$PG_MAJOR/main/postgresql.conf
 #------------
