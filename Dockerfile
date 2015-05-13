@@ -34,11 +34,8 @@ RUN \
     echo "deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx" >> /etc/apt/sources.list && \
     echo "deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx" >> /etc/apt/sources.list && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    echo "deb https://deb.nodesource.com/node trusty main" > /etc/apt/sources.list.d/nodesource.list && \
-    echo "deb-src https://deb.nodesource.com/node trusty main" >> /etc/apt/sources.list.d/nodesource.list && \
     echo "deb http://www.rabbitmq.com/debian/ testing main" > /etc/apt/sources.list.d/rabbitmq.list && \
     wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    wget -qO - https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     wget -qO - https://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
 
 RUN \
@@ -52,14 +49,11 @@ RUN \
         python-software-properties \
         libpq-dev \
         redis-server \
-        nodejs \
         rabbitmq-server \
         nginx
 
-RUN pip install pip-accel
+RUN pip install pip-accel virtualenv
 
-RUN npm install npm -g && \
-    npm install gulp -g
 
 RUN service rabbitmq-server start && \
     rabbitmq-plugins enable rabbitmq_management && \
