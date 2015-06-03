@@ -3,8 +3,6 @@ MAINTAINER Igor Lubimov <igor@checkio.org>
 
 ENV NGINX_VERSION 1.7.10-1~trusty
 ENV PG_MAJOR 9.4
-#ENV PG_VERSION 9.3.5-0ubuntu0.14.04.1
-ENV PG_VERSION 9.4.1-1.pgdg14.04+1
 ENV DB_NAME code_empire
 ENV DB_REQUEST_LOGGER_NAME request_logger
 
@@ -52,7 +50,8 @@ RUN \
         rabbitmq-server \
         nginx
 
-RUN pip install pip-accel virtualenv
+RUN pip install --upgrade pip
+RUN pip install virtualenv
 
 
 RUN service rabbitmq-server start && \
@@ -68,7 +67,7 @@ VOLUME /var/lib/docker
 #------------ POSTGRESQL --------------
 RUN \
     LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 apt-get install -y postgresql-common && \
-    LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 apt-get install -y postgresql-$PG_MAJOR=$PG_VERSION postgresql-contrib-$PG_MAJOR=$PG_VERSION && \
+    LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 apt-get install -y postgresql-$PG_MAJOR postgresql-contrib-$PG_MAJOR && \
     mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 
 ENV PATH /usr/lib/postgresql/$PG_MAJOR/bin:$PATH
